@@ -224,6 +224,7 @@ def predict():
     global X_test
     if request.method == "POST":
         temp = [request.form[column] for column in X_test.columns]
+        temp = LabelEncoder().fit_transform(temp)
         out = dt_classifier.predict([temp])[0]
         print(out)
         if out == 0:
