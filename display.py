@@ -101,8 +101,8 @@ calc_accuracy("XGBoost", y_test, xgb_prediction)
 # Function to display table
 def display_table(file="default"):
     if file == "default":
-        global data
-        return data.to_html()
+        global originalData
+        return originalData.to_html()
     else:
         df = pd.read_csv("static/" + file + ".csv")
         return df.to_html()
