@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 import xgboost as xgb
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -22,6 +23,7 @@ columns = list(originalData.columns)
 data = originalData.drop(
     columns=["Book Name", "Author", "Book_average_rating", "Book_ratings_count", "gross sales",
              "publisher revenue", "sales rank"])
+userData = pd.read_csv("users.csv")
 
 
 def calc_accuracy(method, label_test, pred):
@@ -153,7 +155,12 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        if username == "user" and password == "password":
+        if username not in userData['username'].values:
+            return render_template("login.html", message="Invalid username")
+            # Retrieve hashed password from DataFrame
+        stored_hashed_password = userData.loc[userData['username'] == username, 'password'].iloc[0]
+        # Check if the provided password matches the stored hashed password
+        if check_password_hash(stored_hashed_password, password):
             session['username'] = username
             return redirect(url_for("dashboard"))
         else:
@@ -161,8 +168,24 @@ def login():
     return render_template("login.html", message="")
 
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    global userData
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        hashed_password = generate_password_hash(password)
+        df_extended = pd.DataFrame([[username, hashed_password]], columns=['username', 'password'])
+        userData = pd.concat([userData, df_extended])
+        userData.to_csv("users.csv", index=False)
+        return redirect(url_for("login"))
+    else:
+        return render_template("register.html", message="")
+
+
 # Page selection route
 @app.route("/page_selection", methods=["GET", "POST"])
+@login_required
 def page_selection():
     if request.method == "POST":
         page_option = request.form["page_option"]
@@ -177,12 +200,14 @@ def page_selection():
 
 # Display table page
 @app.route("/display_table_page", methods=["GET", "POST"])
+@login_required
 def display_table_page():
     return render_template("display_table.html", table=display_table())
 
 
 # Add content page
 @app.route("/add_content_page", methods=["GET", "POST"])
+@login_required
 def add_content_page():
     if request.method == "POST":
         temp = list()
@@ -205,21 +230,25 @@ def add_content_page():
 
 
 @app.route("/dashboard", methods=["GET", "POST"])
+@login_required
 def dashboard():
     return render_template("dashboard.html", columns=columns)
 
 
 @app.route("/about", methods=["GET", "POST"])
+@login_required
 def about():
     return render_template("about.html")
 
 
 @app.route("/contact", methods=["GET", "POST"])
+@login_required
 def contact():
     return render_template("contact.html")
 
 
 @app.route("/predict", methods=["GET", "POST"])
+@login_required
 def predict():
     global X_test
     if request.method == "POST":
@@ -239,6 +268,7 @@ def predict():
 
 # Display bar chart page
 @app.route("/display_bar_chart_page", methods=["GET", "POST"])
+@login_required
 def display_bar_chart_page():
     return render_template("display_chart.html", decision=display_table("Decision Tree"),
                            random=display_table("Random Forest"), xgb=display_table("XGBoost"))

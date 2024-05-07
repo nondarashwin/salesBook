@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register User</title>
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -19,7 +19,22 @@
     </style>
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
+    <script>
+        function validatePassword() {
+    var password = document.getElementById("password").value;
+    console.log(password);
+    var confirmPassword = document.getElementById("confirmPassword").value;
+    console.log(confirmPassword);
+    var message = document.getElementById("message");
+console.log("inside validate");
+    if (password !== confirmPassword) {
+    console.log("password do not match");
+        message.innerHTML = "Passwords do not match.";
+    } else {
+        message.innerHTML = "";
+    }
+}
+    </script>
 </head>
 <body>
 {% include 'LoginPageSideBar.html' %}
@@ -63,24 +78,25 @@
         <div class="col s6">
             <div class="z-depth-3 white lighten-7">
                 <div class="container white lighten-3">
-                    <h1>Login</h1>
+                    <h1>Register User</h1>
                     <form method="POST">
 
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" required><br><br>
                         <label for="password">Password:</label>
-                        <input type="password" id="password" name="password" required><br><br>
+                        <input type="password" id="password" name="password" value="" required onchange="validatePassword()"><br><br>
+                        <label for="password">Confirm Password:</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" value="" required
+                               onchange="validatePassword()"><br><br>
                         <button class="btn waves-effect waves-light" type="submit">
                             Login
                             <i class="material-icons right">login</i>
                         </button>
                         <br>
-                        <br>
-                        <a href="/register">New User?Register Here</a>
-                        <br>
+                        <p id="message" class="red-text"></p>
                     </form>
                     {% if message %}
-                    <p class="red-text">{{ message }}</p>
+                    <p>{{ message }}</p>
                     {% endif %}
                     <br>
                 </div>
