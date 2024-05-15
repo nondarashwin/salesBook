@@ -29,9 +29,9 @@
 console.log("inside validate");
     if (password !== confirmPassword) {
     console.log("password do not match");
-        message.innerHTML = "Passwords do not match.";
+       M.toast({html: '<p class="red-text">Password Doesn\'t match</p>'})
     } else {
-        message.innerHTML = "";
+         M.Toast.dismissAll();
     }
 }
     </script>
@@ -89,14 +89,16 @@ console.log("inside validate");
                         <input type="password" id="confirmPassword" name="confirmPassword" value="" required
                                onchange="validatePassword()"><br><br>
                         <button class="btn waves-effect waves-light" type="submit">
-                            Login
+                            Register
                             <i class="material-icons right">login</i>
                         </button>
                         <br>
                         <p id="message" class="red-text"></p>
                     </form>
                     {% if message %}
-                    <p>{{ message }}</p>
+                    <div class="white">
+                    <script>M.toast({html: '<p class="red-text">{{ message }}</p>'})</script>
+                        </div>
                     {% endif %}
                     <br>
                 </div>

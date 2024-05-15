@@ -79,9 +79,12 @@
                         <a href="/register">New User?Register Here</a>
                         <br>
                     </form>
-                    {% if message %}
-                    <p class="red-text">{{ message }}</p>
+                    {% if error %}
+                    <div class="white">
+                    <script>M.toast({html: '<p class="red-text">{{ error }}</p>'})</script>
+                        </div>
                     {% endif %}
+
                     <br>
                 </div>
             </div>
@@ -89,6 +92,7 @@
     </div>
 
 </main>
+
 {% include 'footer.html' %}
 
 </body>

@@ -156,7 +156,7 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         if username not in userData['username'].values:
-            return render_template("login.html", message="Invalid username")
+            return render_template("login.html", error="Invalid username")
             # Retrieve hashed password from DataFrame
         stored_hashed_password = userData.loc[userData['username'] == username, 'password'].iloc[0]
         # Check if the provided password matches the stored hashed password
@@ -164,8 +164,8 @@ def login():
             session['username'] = username
             return redirect(url_for("dashboard"))
         else:
-            return render_template("login.html", message="Invalid username or password.")
-    return render_template("login.html", message="")
+            return render_template("login.html",  error="Invalid username or password.")
+    return render_template("login.html", error="")
 
 
 @app.route("/register", methods=["GET", "POST"])
